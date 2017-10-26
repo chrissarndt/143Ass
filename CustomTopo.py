@@ -14,29 +14,29 @@ class CustomTopo(Topo):
 
 	# Create aggregation layer
 	agg = []
-	for i in irange(1, fanout):
+	for i in range(1, fanout + 1):
 		cur = self.addSwitch('a%i' % i)
 		agg.append(cur)
 		self.addLink(cur, c1, **linkopts1)
 		
 	# Create edge layer
 	edg = []
-	for i in irange(0, fanout - 1):
-		for j in irange(1, fanout):
+	for i in range(0, fanout):
+		for j in range(1, fanout + 1):
 			cur = self.addSwitch('e%i' % ((i * fanout) + j))
 			edg.append(cur)
 			self.addLink(cur, agg[i], **linkopts2)
 
 	# Create host layer
-	for i in irange(0, fanout * fanout - 1):
-		for j in irange(1, fanout):
-			cur = self.addHost('h%i' & ((i * fanout) + j))
+	for i in range(0, fanout * fanout):
+		for j in range(1, fanout + 1):
+			cur = self.addHost('h%i' % ((i * fanout) + j))
 			self.addLink(cur, edg[i], **linkopts3)
 
 
-linkopts1 = dict(bw=10, delay=’5ms’, loss=10, max_queue_size=1000, use_htb=True)
-linkopts2 = dict(bw=10, delay=’5ms’, loss=10, max_queue_size=1000, use_htb=True)
-linkopts3 = dict(bw=10, delay=’5ms’, loss=10, max_queue_size=1000, use_htb=True)
+lo1 = dict(bw=10, delay='5ms', loss=10, max_queue_size=1000, use_htb=True)
+lo2 = dict(bw=10, delay='5ms', loss=10, max_queue_size=1000, use_htb=True)
+lo3 = dict(bw=10, delay='5ms', loss=10, max_queue_size=1000, use_htb=True)
 
-                    
-topos = { 'custom': ( lambda: CustomTopo( lambda: CustomTopo(linkopts1, linkopts2, linkopts3)) ) }
+# topos = { 'custom': ( lambda: CustomTopo(lo1, lo2, lo3)) }
+topos = { 'custom': ( lambda: CustomTopo({},{},{})) }
