@@ -34,6 +34,9 @@ class Firewall (EventMixin):
 		msg = of.ofp_flow_mod()
                 msg.match.dl_src = src
 		msg.match.dl_dst = dst
+		# gives the firewall higher priority than l2_learning
+		msg.priority = 2;
+
 		# by not setting an action for this flow entry, packets that match will be dropped
                 event.connection.send(msg)
         log.debug("Firewall rules installed on %s", dpidToStr(event.dpid))
