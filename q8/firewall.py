@@ -23,8 +23,8 @@ class Firewall (EventMixin):
         with open(policyFile, "r") as f:
                 reader = csv.DictReader(f)
                 for entry in reader:
-                        self.blacklist.append((EthAddr(row['mac_0']), EthAddr(row['mac_1'])))
-                        self.blacklist.append((EthAddr(row['mac_1']), EthAddr(row['mac_0'])))
+                        self.blacklist.append((EthAddr(entry['mac_0']), EthAddr(entry['mac_1'])))
+                        self.blacklist.append((EthAddr(entry['mac_1']), EthAddr(entry['mac_0'])))
 
     # for any switch
     def _handle_ConnectionUp (self, event):    
