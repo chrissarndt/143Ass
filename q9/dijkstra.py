@@ -51,19 +51,15 @@ class Dijkstra (EventMixin):
     def __init__ (self):
         self.listenTo(core.openflow)
         self.delays = {}
-	self.switchList = {}
+	self.switchList = set()
 	with open(delayFile, 'r') as f:
-		reader = csv.DictReader(f, delimiter=',')
+		reader = csv.reader(f, delimiter=',')
 		reader.next() # skip header line
 		for link, delay in reader:
-			print link
-			print delay
 			if link == 'link':
 				continue
 			# match with linkname
 			s1, s2 = linkNames[link]
-			print s1
-			print s2			
 			self.delays[(s1, s2)] = int(delay)
 			self.delays[(s2, s1)] = int(delay)
 
