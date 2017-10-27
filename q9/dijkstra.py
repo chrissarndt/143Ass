@@ -14,13 +14,33 @@ delayFile = "delay.csv"
 
 ''' Add your global variables here ... '''
 
+# letter names for each link
+linkNames = {
+	'g': ('s11', 's12'),
+	'h': ('s12', 's14'),
+	'i': ('s14', 's16'),
+
+	}
+
 
 
 class Dijkstra (EventMixin):
 
     def __init__ (self):
         self.listenTo(core.openflow)
-        log.debug("Enabling Dijkstra Module")
+        self.delays = {}
+	with open(delayFile, "r") as f:
+		reader = csv.DictReader(f)
+		for link, delay in reader:
+			# match with linkname
+			s1, s2 = linkNames[link]
+			self.delays.add[(s1, s2)] = int(delay)
+			self.delays.add[(s2, s1)] = int(delay)
+	log.debug("Enabling Dijkstra Module")
+	
+
+    def _dijkstras(src, dst):
+	
 
     def _handle_ConnectionUp (self, event):    
         ''' Add your logic here ... '''
