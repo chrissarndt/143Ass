@@ -6,11 +6,11 @@ from pox.lib.addresses import EthAddr
 from collections import namedtuple
 import os
 ''' Add your imports here ... '''
-
+import csv
 
 
 log = core.getLogger()
-delayFile = "delay.csv"
+delayFile = "%s/pox/pox/misc/delay.csv" % os.environ[ 'HOME' ]
 
 ''' Add your global variables here ... '''
 
@@ -52,11 +52,18 @@ class Dijkstra (EventMixin):
         self.listenTo(core.openflow)
         self.delays = {}
 	self.switchList = {}
-	with open(delayFile, "r") as f:
+	with open(delayFile, 'r') as f:
 		reader = csv.DictReader(f)
-		for link, delay in reader:
+		reader.next() # skip header line
+		for delay, link in reader:
+			print link
+			print delay
+			if link == 'link':
+				continue
 			# match with linkname
 			s1, s2 = linkNames[link]
+			print s1
+			print s2			
 			self.delays[(s1, s2)] = int(delay)
 			self.delays[(s2, s1)] = int(delay)
 
@@ -116,11 +123,11 @@ class Dijkstra (EventMixin):
 			cur = node2
 			while cur is not node1:
 				prev = prevArray[cur]
-				2prev = prevArray[prev]
+				doubleprev = prevArray[prev]
 				msg = of.ofp_flow_mod()
                 		msg.match.dl_src = hostIP[node1]
                 		msg.match.dl_dst = hostIP[node2]
-				msg.match.in_port = graph[2prev][prev]
+				msg.match.in_port = graph[doubleprev][prev]
 				event.actions.append(of.ofp_action_output(port = graph[prev][cur]))
 				event.connection.send(msg)
 				cur = prev
