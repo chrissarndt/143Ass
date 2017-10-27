@@ -28,17 +28,29 @@ class Dijkstra (EventMixin):
     def __init__ (self):
         self.listenTo(core.openflow)
         self.delays = {}
+	self.switches = {}
 	with open(delayFile, "r") as f:
 		reader = csv.DictReader(f)
 		for link, delay in reader:
 			# match with linkname
 			s1, s2 = linkNames[link]
-			self.delays.add[(s1, s2)] = int(delay)
-			self.delays.add[(s2, s1)] = int(delay)
+			self.delays[(s1, s2)] = int(delay)
+			self.delays[(s2, s1)] = int(delay)
+
+			self.switches.add(s1)
+			self.switches.add(s2)
+
 	log.debug("Enabling Dijkstra Module")
 	
 
     def _dijkstras(src, dst):
+	# initialize distances
+	distanceArray = defaultdict(lambda:float('inf'))
+	distanceArray[src] = 0
+
+	#initialize prev storage
+	prevArray = {}
+	unseen = set.copy(self.switches)
 	
 
     def _handle_ConnectionUp (self, event):    
