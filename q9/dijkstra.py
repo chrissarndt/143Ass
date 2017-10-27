@@ -53,7 +53,7 @@ class Dijkstra (EventMixin):
         self.delays = {}
 	self.switchList = {}
 	with open(delayFile, 'r') as f:
-		reader = csv.DictReader(f)
+		reader = csv.DictReader(f, delimiter=',')
 		reader.next() # skip header line
 		for delay, link in reader:
 			print link
