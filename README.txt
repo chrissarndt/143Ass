@@ -23,7 +23,8 @@
 ## algorithm as laid out in dijkstra.py using the topography 
 ## laid out in topo.py, run the lines:
   
-    pox.py misc.dijkstra & sudo mn --custom topo.py --topo custom --controller remote --mac
-  
-## The topography can be changed by changing both topo.py and the 
-## delay.csv.
+    pox.py misc.dijkstra & sudo mn --custom topo.py --prtopo custom --controller remote --mac
+ 
+## The weights can be changed by altering delay.csv appropriately; to 
+## change the topography, you must change topo.py and the 
+## linkNames data structure in dijkstra.py as well.
