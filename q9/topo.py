@@ -25,14 +25,14 @@ class Q9Topo(Topo):
 	self.addLink(h19, s18)
 
 	# Add switch/switch links
-	self.addLink(s11, s12, delay='10ms')
-	self.addLink(s12, s14, delay='50ms')
-	self.addLink(s14, s16, delay='10ms')
-	self.addLink(s16, s18, delay='30ms')
-	self.addLink(s18, s11, delay='30ms')
-	self.addLink(s12, s18, delay='10ms')
-	self.addLink(s12, s16, delay='100ms')
-	self.addLink(s18, s14, delay='20ms')
+	self.addLink(s11, s12)
+	self.addLink(s12, s14)
+	self.addLink(s14, s16)
+	self.addLink(s16, s18)
+	self.addLink(s18, s11)
+	self.addLink(s12, s18)
+	self.addLink(s12, s16)
+	self.addLink(s18, s14)
 
 
 	
