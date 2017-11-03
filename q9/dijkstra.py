@@ -79,7 +79,7 @@ class Dijkstra (EventMixin):
 	log.debug("Enabling Dijkstra Module")
 	
 
-    def dijkstras(src, dst):
+    def _dijkstras(src, dst):
 	# initialize distances
         distanceArray = defaultdict(lambda:float('inf'))
         distanceArray[src] = 0
@@ -115,7 +115,7 @@ class Dijkstra (EventMixin):
 	# iterate through all combinations of src, dest
 	for node1 in graph:
 		for node2 in graph:
-			prevArray = dijkstras(node1, node2)
+			prevArray = self._dijkstras(node1, node2)
 			cur = node2
 			while cur is not node1:
 				prev = prevArray[cur]
