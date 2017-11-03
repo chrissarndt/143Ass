@@ -79,7 +79,7 @@ class Dijkstra (EventMixin):
 	log.debug("Enabling Dijkstra Module")
 	
 
-    def _dijkstras(src, dst):
+    def dijkstras(src, dst):
 	# initialize distances
         distanceArray = defaultdict(lambda:float('inf'))
         distanceArray[src] = 0
