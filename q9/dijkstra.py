@@ -4,6 +4,7 @@ from pox.lib.revent import *
 from pox.lib.util import dpidToStr
 from pox.lib.addresses import EthAddr
 from collections import namedtuple
+from collections import defaultdict
 import os
 ''' Add your imports here ... '''
 import csv
@@ -45,13 +46,17 @@ hostIP = {
     	'h19': ('10.0.0.4', '00:00:00:00:00:04'),
 }
 
+hosts = {
+	
+}
+
 
 class Dijkstra (EventMixin):
 
     def __init__ (self):
         self.listenTo(core.openflow)
         self.delays = {}
-	self.switchList = set()
+	self.nodeList = set()
 	with open(delayFile, 'r') as f:
 		reader = csv.reader(f, delimiter=',')
 		reader.next() # skip header line
@@ -63,9 +68,10 @@ class Dijkstra (EventMixin):
 			self.delays[(s1, s2)] = int(delay)
 			self.delays[(s2, s1)] = int(delay)
 
-			self.switchList.add(s1)
-			self.switchList.add(s2)
-
+			self.nodeList.add(s1)
+			self.nodeList.add(s2)
+	
+	
 	# adding switch <-> host latency to list of delays
 	self.delays[('h13', 's12')] = 1
 	self.delays[('s12', 'h13')] = 1
@@ -76,35 +82,52 @@ class Dijkstra (EventMixin):
 	self.delays[('h17', 's16')] = 1
 	self.delays[('s16', 'h17')] = 1
 
+	# adding hosts to nodeList
+	self.nodeList.add('h13')
+	self.nodeList.add('h15')
+	self.nodeList.add('h17')
+	self.nodeList.add('h19')
 	log.debug("Enabling Dijkstra Module")
 	
 
-    def _dijkstras(src, dst):
+    def _dijkstras(self, src, dst):
 	# initialize distances
-        distanceArray = defaultdict(lambda:float('inf'))
+        print "starting dijkstras"
+	distanceArray = defaultdict(lambda:float('inf'))
         distanceArray[src] = 0
-
+	print "src"
+	print src
 	#initialize prev storage
 	prevArray = {}
-
-	unseen = set.copy(self.switches)
 	
+	print "initialized arrays"
+	unseen = set.copy(self.nodeList)
+	
+	print "starting while loop"
 	while unseen:
 		# find min dist node
-		u = min(unseen, key=lambda node:distanceArray[node])
+		print distanceArray
+		u = min(unseen, key=lambda x:distanceArray[x])
 		unseen.remove(u)
-		
+		print "u"
+		print u	
+		# print distanceArray[u]
 		for neighbor in graph[u]:
+			# print neighbor
 			# normal dijkstras
 			if neighbor in unseen:
 				cur = distanceArray[u] + self.delays[(u, neighbor)]
+				# print "cur"
+				# print cur
+				print distanceArray[neighbor]
 				if cur < distanceArray[neighbor]:
 					distanceArray[neighbor] = cur
 					prevArray[neighbor] = u 
+					# print prevArray
 			# skip condition
 			else:
 				continue
-				
+	print prevArray				
 	return prevArray
 
 
@@ -113,19 +136,24 @@ class Dijkstra (EventMixin):
         ''' Add your logic here ... '''
 	
 	# iterate through all combinations of src, dest
-	for node1 in graph:
-		for node2 in graph:
+	for host1 in hostIP.iteritems():
+		for host2 in hostIP.iteritems():
+			node1 = host1[0]
+			node2 = host2[0]
 			prevArray = self._dijkstras(node1, node2)
 			cur = node2
-			while cur is not node1:
+			while cur != node1:
 				prev = prevArray[cur]
-				doubleprev = prevArray[prev]
-				msg = of.ofp_flow_mod()
-                		msg.match.dl_src = hostIP[node1]
-                		msg.match.dl_dst = hostIP[node2]
-				msg.match.in_port = graph[doubleprev][prev]
-				event.actions.append(of.ofp_action_output(port = graph[prev][cur]))
-				event.connection.send(msg)
+				if prev != node1:
+					doubleprev = prevArray[prev]
+					msg = of.ofp_flow_mod()
+                			print hostIP[node1][1]
+					print hostIP[node2][1]
+					msg.match.dl_src = hostIP[node1][1]
+                			msg.match.dl_dst = hostIP[node2][1]
+					msg.match.in_port = graph[doubleprev][prev]
+					msg.actions.append(of.ofp_action_output(port = graph[prev][cur]))
+					event.connection.send(msg)
 				cur = prev
 				
                 		
