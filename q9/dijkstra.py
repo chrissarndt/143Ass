@@ -92,25 +92,25 @@ class Dijkstra (EventMixin):
 
     def _dijkstras(self, src, dst):
 	# initialize distances
-        print "starting dijkstras"
+	print "starting dijkstras"
 	distanceArray = defaultdict(lambda:float('inf'))
         distanceArray[src] = 0
-	print "src"
-	print src
+	# print "src"
+	# print src
 	#initialize prev storage
 	prevArray = {}
 	
-	print "initialized arrays"
+	# print "initialized arrays"
 	unseen = set.copy(self.nodeList)
 	
-	print "starting while loop"
+	# print "starting while loop"
 	while unseen:
 		# find min dist node
 		print distanceArray
 		u = min(unseen, key=lambda x:distanceArray[x])
 		unseen.remove(u)
-		print "u"
-		print u	
+		# print "u"
+		# print u	
 		# print distanceArray[u]
 		for neighbor in graph[u]:
 			# print neighbor
@@ -147,8 +147,6 @@ class Dijkstra (EventMixin):
 				if prev != node1:
 					doubleprev = prevArray[prev]
 					msg = of.ofp_flow_mod()
-                			print hostIP[node1][1]
-					print hostIP[node2][1]
 					msg.match.dl_src = hostIP[node1][1]
                 			msg.match.dl_dst = hostIP[node2][1]
 					msg.match.in_port = graph[doubleprev][prev]
